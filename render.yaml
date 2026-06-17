@@ -1,27 +1,12 @@
 services:
   - type: web
-    name: cybertwin-api
-    runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    region: oregon
-    envVars:
-      - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: DATABASE_URL
-        value: sqlite:///./cybertwin.db
-      - key: CORS_ORIGINS
-        value: https://cybertwin-ai.onrender.com,http://localhost:5173,http://localhost:3000
-    autoDeploy: true
-    plan: free
-
-  - type: web
-    name: cybertwin-web
+    name: cybertwin-frontend
     runtime: node
     buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm run preview
-    rootDir: .
+    startCommand: cd frontend && npm run preview -- --host 0.0.0.0 --port $PORT
     envVars:
-      - key: VITE_API_URL
-        value: https://cybertwin-api.onrender.com
-    autoDeploy: true
-    plan: free
+      - key: NODE_ENV
+        value: production
+    routes:
+      - path: /
+        destination: /index.html
