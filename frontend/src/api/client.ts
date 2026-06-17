@@ -54,13 +54,28 @@ export interface CVE {
 
 async function apiCall(endpoint: string, options?: RequestInit) {
   const url = `${API_BASE}${endpoint}`
+  const token = localStorage.getItem('token')
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...options?.headers,
+  }
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
   const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
+    headers,
     ...options,
   })
+
+  if (response.status === 401) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    window.location.href = '/login'
+    throw new Error('Unauthorized')
+  }
 
   if (!response.ok) {
     const error = await response.text()

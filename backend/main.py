@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import init_db
 from config import settings
-from routers import company, assets, attack, chat, whatif, cve, report, demo
+from routers import company, assets, attack, chat, whatif, cve, report, demo, auth
 import os
 import sys
 
@@ -15,6 +15,7 @@ app = FastAPI(
     version="0.1.0"
 )
 
+app.include_router(auth.router)
 app.include_router(company.router)
 app.include_router(assets.router)
 app.include_router(attack.router)

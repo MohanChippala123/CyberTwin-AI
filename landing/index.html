@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberTwin AI - Digital Twin Attack Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f3a 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(10, 14, 26, 0.95);
+            border-bottom: 1px solid #1e2d4a;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .nav-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #00d4ff;
+        }
+
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00d4ff, #00ff9f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #a0aec0;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 4rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00d4ff;
+            border: 1px solid #00d4ff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .features {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(15, 22, 41, 0.8);
+            border: 1px solid #1e2d4a;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: #a0aec0;
+            font-size: 0.95rem;
+        }
+
+        .demo-section {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 3rem 2rem;
+            background: rgba(30, 45, 74, 0.3);
+            border: 1px solid #1e2d4a;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+
+        .demo-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #00ff9f;
+        }
+
+        .demo-section p {
+            color: #a0aec0;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #a0aec0;
+        }
+
+        .footer {
+            background: rgba(10, 14, 26, 0.95);
+            border-top: 1px solid #1e2d4a;
+            padding: 2rem;
+            text-align: center;
+            color: #718096;
+            margin-top: 4rem;
+        }
+
+        .footer a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .nav-links a {
+                margin-left: 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🎯 CyberTwin AI</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#demo">Demo</a>
+            <a href="https://github.com/MohanChippala123/CyberTwin-AI" target="_blank">GitHub</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>CyberTwin AI</h1>
+        <p>Digital Twin Attack Simulator - Simulate how attackers could compromise your infrastructure BEFORE a real attack happens</p>
+        <div class="cta-buttons">
+            <a href="https://cybertwin-ai.onrender.com" class="btn btn-primary">Launch App</a>
+            <a href="https://github.com/MohanChippala123/CyberTwin-AI" target="_blank" class="btn btn-secondary">View on GitHub</a>
+        </div>
+    </div>
+
+    <div id="features" class="features">
+        <div class="feature-card">
+            <div class="feature-icon">🔮</div>
+            <h3>Digital Twin</h3>
+            <p>AI-powered simulation of your attack surface with realistic asset generation</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>AI Analyst</h3>
+            <p>Chat with Claude-powered SOC analyst for security insights and recommendations</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">⚔️</div>
+            <h3>Attack Paths</h3>
+            <p>Interactive graph showing realistic attack chains mapped to MITRE ATT&CK</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Risk Scoring</h3>
+            <p>Automatic vulnerability assessment with CVE integration and risk breakdown</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>What-If Scenarios</h3>
+            <p>Simulate attack impact: "What if my admin account is compromised?"</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📄</div>
+            <h3>Security Reports</h3>
+            <p>Generate executive summaries with actionable remediation roadmaps</p>
+        </div>
+    </div>
+
+    <div id="demo" class="demo-section">
+        <h2>Try the Demo</h2>
+        <p>Explore CyberTwin AI with our pre-configured TechStartup Inc demo company. See how AI-powered threat modeling works in real-time.</p>
+        <a href="https://cybertwin-ai.onrender.com" class="btn btn-primary">Launch Demo</a>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">2,500+</div>
+            <div class="stat-label">Lines of Code</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">15</div>
+            <div class="stat-label">API Endpoints</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">5</div>
+            <div class="stat-label">AI Prompts</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">&lt;5min</div>
+            <div class="stat-label">Time to Insight</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🎯 CyberTwin AI - Where security teams finally get to see attacks before they happen</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            Built with ❤️ using Claude AI •
+            <a href="https://github.com/MohanChippala123/CyberTwin-AI">GitHub</a> •
+            <a href="https://github.com/MohanChippala123/CyberTwin-AI/blob/main/README.md">Docs</a>
+        </p>
+    </div>
+</body>
+</html>
