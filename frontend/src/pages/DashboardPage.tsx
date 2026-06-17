@@ -158,16 +158,16 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - Two Column Layout */}
       <div style={{ flex: 1, display: 'flex', gap: '0', overflow: 'hidden', minHeight: 0 }}>
-        {/* Left Sidebar - Only Risk Score */}
+        {/* Left Panel - Risk Analysis */}
         <div style={{
-          width: '420px',
-          backgroundColor: '#111110',
+          width: '50%',
+          backgroundColor: '#000000',
           borderRight: '1px solid #232320',
           overflow: 'auto',
           flexShrink: 0,
-          paddingRight: '8px'
+          padding: '80px 64px'
         }}>
           <RiskScorePanel
             company={currentCompany}
@@ -177,20 +177,28 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* Right Content Area */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
-          {/* Assets Section */}
-          <div style={{ flex: 1, overflow: 'auto', padding: '64px 80px', minHeight: 0 }}>
-            <div style={{ paddingBottom: '48px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '56px' }}>
+        {/* Right Panel - Asset Visualization */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'auto',
+          minHeight: 0,
+          padding: '80px 64px',
+          backgroundColor: '#000000'
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '56px', height: '100%' }}>
+            {/* Assets Grid Section */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px' }}>
                 <div style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: '#c8f53c' }}></div>
                 <h2 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#e8e6e0', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: "'IBM Plex Mono', monospace" }}>Assets ({assets.length})</h2>
               </div>
 
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                gap: '40px'
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '32px'
               }}>
               {assets.map(asset => {
                 const color = getRiskColor(asset.risk_score)
@@ -201,7 +209,7 @@ export default function DashboardPage() {
                     key={asset.id}
                     onClick={() => setSelectedAsset(asset)}
                     style={{
-                      padding: '36px',
+                      padding: '40px',
                       backgroundColor: '#111110',
                       border: '1px solid #232320',
                       borderRadius: '4px',
@@ -209,7 +217,11 @@ export default function DashboardPage() {
                       transition: 'all 0.2s',
                       boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
                       position: 'relative',
-                      overflow: 'hidden'
+                      overflow: 'hidden',
+                      minHeight: '160px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = color
@@ -256,7 +268,44 @@ export default function DashboardPage() {
               })}
             </div>
             </div>
+
+            {/* Key Metrics Section */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px' }}>
+                <div style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: '#c8f53c' }}></div>
+                <h2 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#e8e6e0', textTransform: 'uppercase', letterSpacing: '0.12em', fontFamily: "'IBM Plex Mono', monospace" }}>Summary</h2>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px' }}>
+                {/* Critical Assets Count */}
+                <div style={{
+                  padding: '32px',
+                  backgroundColor: '#111110',
+                  border: '1px solid #232320',
+                  borderRadius: '4px'
+                }}>
+                  <p style={{ fontSize: '11px', color: '#8a8880', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', fontFamily: "'IBM Plex Mono', monospace" }}>Critical Assets</p>
+                  <p style={{ fontSize: '32px', fontWeight: 700, color: '#ef4444', margin: 0 }}>
+                    {assets.filter(a => a.risk_score >= 8).length}
+                  </p>
+                </div>
+
+                {/* High Risk Assets Count */}
+                <div style={{
+                  padding: '32px',
+                  backgroundColor: '#111110',
+                  border: '1px solid #232320',
+                  borderRadius: '4px'
+                }}>
+                  <p style={{ fontSize: '11px', color: '#8a8880', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', fontFamily: "'IBM Plex Mono', monospace" }}>High Risk Assets</p>
+                  <p style={{ fontSize: '32px', fontWeight: 700, color: '#f97316', margin: 0 }}>
+                    {assets.filter(a => a.risk_score >= 6 && a.risk_score < 8).length}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
 
         </div>
       </div>
