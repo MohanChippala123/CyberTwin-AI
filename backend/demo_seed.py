@@ -5,6 +5,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from database import SessionLocal, init_db
 from models.company import Company, Asset
 from models.attack import AttackPath
+from models.report import Report
+from models.chat import ChatSession, ChatMessage
+from models.user import User
 from services.mock_data import DEMO_COMPANY, DEMO_ASSETS, DEMO_ATTACK_PATHS
 from services.risk_service import calculate_asset_risk_score, calculate_company_risk_score
 
@@ -69,14 +72,14 @@ def seed_database():
         company.overall_risk_score = calculate_company_risk_score(assets, db.query(AttackPath).filter_by(company_id=company.id).all())
         db.commit()
 
-        print(f"✓ Seeded demo company: {company.name} (ID: {company.id})")
-        print(f"✓ Created {len(assets)} assets")
-        print(f"✓ Created {len(DEMO_ATTACK_PATHS)} attack paths")
-        print(f"✓ Overall risk score: {company.overall_risk_score:.1f}/10.0")
+        print(f"[OK] Seeded demo company: {company.name} (ID: {company.id})")
+        print(f"[OK] Created {len(assets)} assets")
+        print(f"[OK] Created {len(DEMO_ATTACK_PATHS)} attack paths")
+        print(f"[OK] Overall risk score: {company.overall_risk_score:.1f}/10.0")
 
     except Exception as e:
         db.rollback()
-        print(f"✗ Error seeding database: {e}")
+        print(f"[ERROR] Error seeding database: {e}")
         raise
     finally:
         db.close()

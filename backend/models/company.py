@@ -35,7 +35,7 @@ class Asset(Base):
     risk_score = Column(Float, default=0.0)
     status = Column(String(20), default="safe")
     cve_ids = Column(JSON, default=list)
-    metadata = Column(JSON, default=dict)
+    extra_metadata = Column(JSON, default=dict)
     pos_x = Column(Float, default=0.0)
     pos_y = Column(Float, default=0.0)
     created_at = Column(DateTime, default=datetime.utcnow)
