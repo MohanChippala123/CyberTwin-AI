@@ -5,165 +5,175 @@ import { useStore } from '../store/useStore'
 
 export default function HomePage() {
   const navigate = useNavigate()
-  const { setCurrentCompany, setAssets, setAttackPaths, setLoading, setError, loading, error } = useStore()
-  const [formData, setFormData] = useState({ name: '', domain: '', industry: 'SaaS', employee_count: 150 })
-  const [isLoadingDemo, setIsLoadingDemo] = useState(false)
+  const { setCurrentCompany, setAssets, setAttackPaths, setLoading, loading, setError, error } = useStore()
+  const [organization, setOrganization] = useState('')
+  const [domain, setDomain] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!organization.trim() || !domain.trim()) {
+      setError('Organization name and domain required')
+      return
+    }
+
     setLoading(true)
     setError(null)
 
     try {
-      const company = await client.generateCompany(formData)
+      const company = await client.generateCompany({
+        name: organization,
+        domain: domain,
+        industry: 'Enterprise',
+        employee_count: 500
+      })
       setCurrentCompany(company)
       setAssets(company.assets || [])
       const attackPaths = await client.generateAttackPaths(company.id)
       setAttackPaths(attackPaths.attack_paths || [])
       navigate(`/dashboard/${company.id}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate company')
-      setLoading(false)
-    }
-  }
-
-  const handleLoadDemo = async () => {
-    setIsLoadingDemo(true)
-    setLoading(true)
-    setError(null)
-
-    try {
-      const company = await client.seedDemoCompany()
-      setCurrentCompany(company)
-      setAssets(company.assets || [])
-      const attackPaths = await client.getAttackPaths(company.id)
-      setAttackPaths(attackPaths.attack_paths || [])
-      navigate(`/dashboard/${company.id}`)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load demo')
-      setIsLoadingDemo(false)
+      setError(err instanceof Error ? err.message : 'Failed to analyze')
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1117] flex flex-col">
-      {/* Header */}
-      <div className="border-b border-[#30363d] px-6 py-4">
-        <h1 className="text-xl font-bold text-[#e6edf3]">CyberTwin AI</h1>
-        <p className="text-sm text-[#8b949e]">Attack Surface Intelligence Platform</p>
+    <div style={{ width: '100%', height: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column' }}>
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute top-0 left-0 w-96 h-96 rounded-full blur-3xl"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(0, 80, 120, 0.12), transparent 40%)',
+          }}
+        />
+        <div
+          className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-3xl"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(0, 100, 100, 0.08), transparent 40%)',
+          }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 w-80 h-80 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(120, 0, 120, 0.06), transparent 50%)',
+          }}
+        />
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-4xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left - intro */}
-            <div className="lg:col-span-1">
-              <h2 className="text-lg font-bold text-[#e6edf3] mb-4">Map Your Attack Surface</h2>
-              <p className="text-sm text-[#8b949e] mb-6 leading-relaxed">
-                Simulate realistic attack paths against your infrastructure. Understand vulnerability chains before they're exploited.
-              </p>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingLeft: '16px', paddingRight: '16px', paddingTop: '48px', paddingBottom: '48px', animation: 'heroFadeIn 0.6s cubic-bezier(0.16,1,0.3,1) both', position: 'relative', zIndex: 10 }}>
+        <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.08)', maxWidth: '520px', marginBottom: '48px' }} className="w-full" />
 
-              <div className="space-y-3">
-                <div className="flex gap-3">
-                  <div className="text-[#238636]">✓</div>
-                  <div className="text-sm text-[#8b949e]">AI-powered attack simulation</div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="text-[#238636]">✓</div>
-                  <div className="text-sm text-[#8b949e]">MITRE ATT&CK mapped techniques</div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="text-[#238636]">✓</div>
-                  <div className="text-sm text-[#8b949e]">Real-time risk scoring</div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="text-[#238636]">✓</div>
-                  <div className="text-sm text-[#8b949e]">SOC analyst insights</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right - forms */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* New company form */}
-              <div className="card">
-                <h3 className="text-sm font-bold text-[#e6edf3] mb-4">Analyze New Organization</h3>
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-medium text-[#8b949e] mb-2">Organization name</label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Acme Corp"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-[#8b949e] mb-2">Primary domain</label>
-                    <input
-                      type="text"
-                      value={formData.domain}
-                      onChange={(e) => setFormData({ ...formData, domain: e.target.value })}
-                      placeholder="example.com"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-[#8b949e] mb-2">Industry</label>
-                      <input
-                        type="text"
-                        value={formData.industry}
-                        onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
-                        placeholder="SaaS"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#8b949e] mb-2">Headcount</label>
-                      <input
-                        type="number"
-                        value={formData.employee_count}
-                        onChange={(e) => setFormData({ ...formData, employee_count: parseInt(e.target.value) })}
-                        placeholder="150"
-                      />
-                    </div>
-                  </div>
-
-                  <button type="submit" disabled={loading} className="w-full btn-primary mt-4">
-                    {loading ? 'Generating digital twin...' : 'Analyze'}
-                  </button>
-                </form>
-              </div>
-
-              {/* Demo button */}
-              <div className="card bg-[#161b22]">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-bold text-[#e6edf3]">Try the demo</h3>
-                    <p className="text-xs text-[#8b949e] mt-1">Explore with TechStartup Inc (8 assets, 2 attack paths)</p>
-                  </div>
-                  <button
-                    onClick={handleLoadDemo}
-                    disabled={isLoadingDemo}
-                    className="btn-primary"
-                  >
-                    {isLoadingDemo ? 'Loading...' : 'Load demo'}
-                  </button>
-                </div>
-              </div>
-
-              {error && (
-                <div className="p-3 bg-[rgba(248,81,73,0.1)] border border-[#f85149] rounded text-sm text-[#f85149]">
-                  {error}
-                </div>
-              )}
-            </div>
+        <div style={{ maxWidth: '520px' }} className="w-full text-center">
+          <div style={{
+            fontSize: '10px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.22em',
+            color: 'var(--text-3)',
+            fontWeight: 500,
+            fontFamily: 'var(--mono)',
+            marginBottom: '20px',
+            opacity: 0.6,
+            display: 'inline-block'
+          }}>
+            Attack Path Analysis
           </div>
+
+          <h1 style={{
+            marginBottom: '12px',
+            lineHeight: 1.0,
+            letterSpacing: '-0.04em',
+          }}>
+            Where does this
+            <br />
+            <span style={{
+              background: 'linear-gradient(135deg, var(--accent) 0%, #9fd830 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>
+              attack
+            </span>
+            <br />
+            chain go?
+          </h1>
+
+          <p style={{ marginBottom: '36px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.65 }}>
+            Map your infrastructure and simulate realistic attack paths. Understand your blast radius before attackers do.
+          </p>
+
+          {error && (
+            <div style={{
+              marginBottom: '16px',
+              padding: '12px 16px',
+              background: 'rgba(239, 68, 68, 0.06)',
+              border: '1px solid rgba(239, 68, 68, 0.25)',
+              borderRadius: '4px',
+              fontSize: '12px',
+              color: 'var(--high)',
+              fontFamily: 'var(--mono)',
+            }}>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleAnalyze} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <input
+                type="text"
+                value={organization}
+                onChange={(e) => setOrganization(e.target.value)}
+                placeholder="Organization name"
+              />
+
+              <input
+                type="text"
+                value={domain}
+                onChange={(e) => {
+                  let val = e.target.value.trim().toLowerCase()
+                  if (val.startsWith('https://')) val = val.substring(8)
+                  if (val.startsWith('http://')) val = val.substring(7)
+                  if (val.startsWith('www.')) val = val.substring(4)
+                  setDomain(val)
+                }}
+                placeholder="Domain"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary"
+              style={{
+                marginTop: '12px',
+                boxShadow: 'var(--bg) 0 0 12px rgba(200, 245, 60, 0.15)',
+              }}
+            >
+              {loading ? 'Analyzing...' : 'Analyze'}
+            </button>
+          </form>
+
+          <button
+            onClick={async () => {
+              setLoading(true)
+              try {
+                const company = await client.seedDemoCompany()
+                setCurrentCompany(company)
+                setAssets(company.assets || [])
+                const attackPaths = await client.getAttackPaths(company.id)
+                setAttackPaths(attackPaths.attack_paths || [])
+                navigate(`/dashboard/${company.id}`)
+              } catch (err) {
+                setError(err instanceof Error ? err.message : 'Failed to load demo')
+                setLoading(false)
+              }
+            }}
+            disabled={loading}
+            className="btn-secondary"
+            style={{ marginTop: '20px' }}
+          >
+            {loading ? 'Loading...' : 'or view demo'}
+          </button>
         </div>
       </div>
     </div>
