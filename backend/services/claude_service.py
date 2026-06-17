@@ -1,10 +1,21 @@
 import json
 from anthropic import Anthropic
 from config import settings
+from . import demo_mode
+import os
 
-client = Anthropic()
+# Use demo mode if no API key
+USE_DEMO = not settings.ANTHROPIC_API_KEY or settings.ANTHROPIC_API_KEY == "sk-ant-YOUR_API_KEY_HERE"
+
+if not USE_DEMO:
+    client = Anthropic()
+else:
+    client = None
 
 def generate_assets(company_name: str, domain: str, industry: str = None, employee_count: int = None):
+    if USE_DEMO:
+        return demo_mode.generate_assets_demo(company_name, domain, industry, employee_count)
+
     prompt = f"""Generate a realistic IT asset inventory digital twin for:
 Company: {company_name}
 Domain: {domain}
@@ -47,6 +58,9 @@ Risk scores should reflect realistic vulnerabilities."""
 
 
 def generate_attack_paths(assets_json: str, company_name: str):
+    if USE_DEMO:
+        return demo_mode.generate_attack_paths_demo(assets_json, company_name)
+
     prompt = f"""Analyze this company's asset inventory and generate realistic attack paths:
 
 Company: {company_name}
@@ -94,6 +108,9 @@ Use actual MITRE ATT&CK technique IDs (T####.###)."""
 
 
 def soc_chat(company_context: str, conversation_history: list, user_message: str):
+    if USE_DEMO:
+        return demo_mode.soc_chat_demo(user_message)
+
     system_prompt = f"""You are Alex, a Senior SOC Analyst at CyberTwin AI with 10 years of experience.
 You analyze the digital twin of: {company_context}
 
@@ -120,6 +137,9 @@ Stay focused on the provided company's security posture."""
 
 
 def simulate_whatif(assets_json: str, attack_paths_json: str, scenario: str, affected_asset_name: str):
+    if USE_DEMO:
+        return demo_mode.whatif_demo(scenario)
+
     prompt = f"""Perform a what-if attack simulation:
 
 Assets: {assets_json}
@@ -158,6 +178,9 @@ Return ONLY valid JSON:
 
 
 def generate_report_summary(company_name: str, assets_json: str, attack_paths_json: str):
+    if USE_DEMO:
+        return demo_mode.generate_report_demo()
+
     prompt = f"""Generate an executive security report for {company_name}:
 
 Assets: {assets_json}
