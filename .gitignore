@@ -1,0 +1,39 @@
+# Backend
+backend/.env
+backend/__pycache__/
+backend/*.pyc
+backend/cybertwin.db
+backend/cybertwin.db-journal
+backend/.pytest_cache/
+backend/venv/
+backend/env/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+frontend/.DS_Store
+frontend/*.pem
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
